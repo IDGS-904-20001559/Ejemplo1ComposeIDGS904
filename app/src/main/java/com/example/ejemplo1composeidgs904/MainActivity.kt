@@ -10,59 +10,109 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.ejemplo1composeidgs904.ui.theme.Ejemplo1ComposeIDGS904Theme
+import com.example.ejemplo1composeidgs904.Ejemplo1ComposeIDGS904Theme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             Ejemplo1ComposeIDGS904Theme {
-                Tarjeta()
+                Tarjeta(tarjetas)
             }
         }
     }
 }
 
-data class Personajes(val nombre: String, val descripcion: String)
+private val tarjetas: List<PersonajesTarjeta> = listOf(
+    PersonajesTarjeta("Goku", "Descripcion: El protagonista de la serie, conocido por su gran poder y personalidad amigable. Originalmente enviado a la Tierra como un infante volador con la misión de conquistarla"),
+    PersonajesTarjeta("Vegetta", "Descripcion: El protagonista de la serie, conocido por su gran poder y personalidad amigable. Originalmente enviado a la Tierra como un infante volador con la misión de conquistarla"),
+    PersonajesTarjeta("Roshi", "Descripcion: El protagonista de la serie, conocido por su gran poder y personalidad amigable. Originalmente enviado a la Tierra como un infante volador con la misión de conquistarla"),
+    PersonajesTarjeta("Broly", "Descripcion: El protagonista de la serie, conocido por su gran poder y personalidad amigable. Originalmente enviado a la Tierra como un infante volador con la misión de conquistarla"),
+    PersonajesTarjeta("Cell", "Descripcion: El protagonista de la serie, conocido por su gran poder y personalidad amigable. Originalmente enviado a la Tierra como un infante volador con la misión de conquistarla"),
+    PersonajesTarjeta("Zarbon", "Descripcion: El protagonista de la serie, conocido por su gran poder y personalidad amigable. Originalmente enviado a la Tierra como un infante volador con la misión de conquistarla"),
+    PersonajesTarjeta("Dodoria", "Descripcion: El protagonista de la serie, conocido por su gran poder y personalidad amigable. Originalmente enviado a la Tierra como un infante volador con la misión de conquistarla"),
+    PersonajesTarjeta("Gohan", "Descripcion: El protagonista de la serie, conocido por su gran poder y personalidad amigable. Originalmente enviado a la Tierra como un infante volador con la misión de conquistarla"),
+    PersonajesTarjeta("Krillin", "Descripcion: El protagonista de la serie, conocido por su gran poder y personalidad amigable. Originalmente enviado a la Tierra como un infante volador con la misión de conquistarla"),
+    PersonajesTarjeta("Tenshinhan", "Descripcion: El protagonista de la serie, conocido por su gran poder y personalidad amigable. Originalmente enviado a la Tierra como un infante volador con la misión de conquistarla"),
+)
+
+data class PersonajesTarjeta(val nombre: String, val descripcion: String)
 
 @Composable
-fun Tarjeta(){
-    Row(
+fun Tarjeta(personajes:List<PersonajesTarjeta>){
+    LazyColumn {
+       items(personajes){personaje -> MyPersonaje(personaje)}
+    }
+}
+
+@Composable
+fun MyPersonaje(personajes: PersonajesTarjeta){
+    Card(
         modifier = Modifier
-            .padding(8.dp)
-            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp)
+            .fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
 
-    ){
-        ImagenHeroe()
-        Personaje()
+    ) {
+
+        Row(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .padding(8.dp)
+
+        ) {
+            ImagenHeroe(personajes.nombre.lowercase())
+            Personajes(personajes)
+        }
     }
 }
 
 @Composable
-fun Personaje(){
+fun Personajes(personajes: PersonajesTarjeta){
     Column {
-        Text("Nombre: Goku")
-        Text("Descripcion: El protagonista de la serie, conocido por su gran poder y personalidad amigable. Originalmente enviado a la Tierra como un infante volador con la misión de conquistarla")
+        Personaje(personajes.nombre, MaterialTheme.colorScheme.primary, MaterialTheme.typography.titleLarge)
+        Personaje(personajes.descripcion, MaterialTheme.colorScheme.onBackground, MaterialTheme.typography.bodyMedium)
     }
 }
 
 @Composable
-fun ImagenHeroe(){
+fun Personaje(name : String, color: Color, style: TextStyle){
+    Text(text = name, color = color, style = style)
+}
+
+@Composable
+fun ImagenHeroe(imageName : String){
+    val context = LocalContext.current
+    val ImageResid = remember(imageName){
+        context.resources.getIdentifier(imageName.lowercase(),"drawable", context.packageName)
+    }
+
     Image(
-        painterResource(id = R.drawable.android_icon_192x192),
+        painterResource(id = ImageResid),
         contentDescription = "Goku",
         modifier = Modifier
             .padding(16.dp)
@@ -76,5 +126,5 @@ fun ImagenHeroe(){
 @Preview
 @Composable
 fun PreviewMessageCard(){
-    Tarjeta()
+    Tarjeta(tarjetas)
 }
